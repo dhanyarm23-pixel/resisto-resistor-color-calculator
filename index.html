@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Resisto | Resistor Calculator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: #101827;
+    color: white;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    padding: 28px;
+    background: #1e293b;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px #0005;
+}
+
+h1 {
+    text-align: center;
+    color: #38bdf8;
+}
+
+.subtitle {
+    text-align: center;
+    color: #cbd5e1;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-top: 17px;
+    margin-bottom: 8px;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+    font-size: 15px;
+}
+
+button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #0284c7;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0369a1;
+}
+
+.result {
+    margin-top: 22px;
+    padding: 18px;
+    background: #0f172a;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 1.8;
+    color: #38bdf8;
+}
+
+.note {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎨 Resisto</h1>
+
+<p class="subtitle">
+Resistor Color Code Calculator
+</p>
+
+<label>First Band</label>
+<select id="band1"></select>
+
+<label>Second Band</label>
+<select id="band2"></select>
+
+<label>Multiplier Band</label>
+<select id="multiplier"></select>
+
+<label>Tolerance Band</label>
+<select id="tolerance"></select>
+
+<button onclick="calculateResistance()">
+Calculate Resistance
+</button>
+
+<div class="result" id="result">
+Select the colour bands to calculate resistance.
+</div>
+
+<p class="note">
+Based on the standard 4-band resistor colour code.
+</p>
+
+</div>
+
+<script>
+
+const colors = [
+    {name:"Black", value:0, color:"#000000"},
+    {name:"Brown", value:1, color:"#8B4513"},
+    {name:"Red", value:2, color:"#ff0000"},
+    {name:"Orange", value:3, color:"#ff8c00"},
+    {name:"Yellow", value:4, color:"#ffff00"},
+    {name:"Green", value:5, color:"#008000"},
+    {name:"Blue", value:6, color:"#0000ff"},
+    {name:"Violet", value:7, color:"#8f00ff"},
+    {name:"Grey", value:8, color:"#808080"},
+    {name:"White", value:9, color:"#ffffff"}
+];
+
+const multipliers = [
+    ...colors.map(c => ({
+        name: c.name,
+        value: Math.pow(10, c.value)
+    })),
+    {name:"Gold", value:0.1},
+    {name:"Silver", value:0.01}
+];
+
+const tolerances = [
+    {name:"Brown", value:1},
+    {name:"Red", value:2},
+    {name:"Green", value:0.5},
+    {name:"Blue", value:0.25},
+    {name:"Violet", value:0.1},
+    {name:"Grey", value:0.05},
+    {name:"Gold", value:5},
+    {name:"Silver", value:10}
+];
+
+function fillSelect(id, list, defaultIndex) {
+    const select = document.getElementById(id);
+
+    list.forEach((item, index) => {
+        const option = document.createElement("option");
+        option.value = item.value;
+        option.textContent = item.name;
+        select.appendChild(option);
+    });
+
+    select.selectedIndex = defaultIndex;
+}
+
+fillSelect("band1", colors, 1);
+fillSelect("band2", colors, 0);
+fillSelect("multiplier", multipliers, 0);
+fillSelect("tolerance", tolerances, 6);
+
+function calculateResistance() {
+
+    const first = Number(document.getElementById("band1").value);
+    const second = Number(document.getElementById("band2").value);
+    const multiplier = Number(document.getElementById("multiplier").value);
+    const tolerance = Number(document.getElementById("tolerance").value);
+
+    const resistance = (first * 10 + second) * multiplier;
+
+    let formatted;
+
+    if (resistance >= 1000000) {
+        formatted = (resistance / 1000000) + " MΩ";
+    } else if (resistance >= 1000) {
+        formatted = (resistance / 1000) + " kΩ";
+    } else {
+        formatted = resistance + " Ω";
+    }
+
+    document.getElementById("result").innerHTML =
+        "<strong>Resistance:</strong><br>" +
+        formatted +
+        "<br><strong>Tolerance:</strong> ±" +
+        tolerance + "%";
+}
+
+</script>
+
+</body>
+</html>
